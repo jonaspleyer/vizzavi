@@ -1,0 +1,4 @@
+[workspace]
+version = "0.1.0"
+members = [ "vizz", "vizz-backend", "vizz-types"]
+resolver = "2"
