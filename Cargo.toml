@@ -1,4 +1,14 @@
-[workspace]
+[package]
+name = "vizz"
 version = "0.1.0"
-members = [ "vizz", "vizz-backend", "vizz-types"]
-resolver = "2"
+edition = "2021"
+
+[dependencies]
+image = "0.25.6"
+nalgebra = "0.33.2"
+ndarray = "0.16.1"
+num = "0.4.3"
+simba = "0.9.0"
+thiserror = "2.0.12"
+
+[dev-dependencies]
