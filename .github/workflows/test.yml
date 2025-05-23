@@ -3,7 +3,7 @@ on: [push, pull_request]
 name: Test
 
 jobs:
-  check:
+  test:
     strategy:
       matrix:
         toolchain: [stable, beta, nightly]
@@ -19,52 +19,18 @@ jobs:
         with:
           toolchain: ${{ matrix.toolchain }}
 
-      - name: Run cargo check
+      - name: cargo check
         run: cargo check
 
-  test:
-    strategy:
-      matrix:
-        toolchain: [stable, beta, nightly]
-        os: [ubuntu-latest, windows-latest]
-    name: Test
-    runs-on: ubuntu-latest
-    needs: check
-    steps:
-      - name: Checkout sources
-        uses: actions/checkout@v2
+      - name: cargo doctest
+        run: cargo doctest
 
-      - name: Install stable toolchain
-        uses: dtolnay/rust-toolchain@master
-        with:
-          toolchain: ${{ matrix.toolchain }}
-
-      - name: Run cargo test
+      - name: cargo test
         run: cargo test
-
-  doctest:
-    strategy:
-      matrix:
-        toolchain: [stable, beta, nightly]
-        os: [ubuntu-latest, windows-latest]
-    name: DocTest
-    runs-on: ${{ matrix.os }}
-    needs: test
-    steps:
-      - name: Checkout sources
-        uses: actions/checkout@v2
-
-      - name: Install stable toolchain
-        uses: dtolnay/rust-toolchain@master
-        with:
-          toolchain: ${{ matrix.toolchain }}
-
-      - name: Run cargo test
-        run: cargo test --doc
 
   codecov:
     runs-on: ubuntu-latest
-    needs: doctest
+    needs: test
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
