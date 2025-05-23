@@ -22,9 +22,6 @@ jobs:
       - name: cargo check
         run: cargo check
 
-      - name: cargo doctest
-        run: cargo doctest
-
       - name: cargo test
         run: cargo test
 
