@@ -8,7 +8,7 @@ jobs:
       matrix:
         toolchain: [stable, beta, nightly]
         os: [ubuntu-latest, windows-latest]
-    name: Check
+    name: Test
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout sources
