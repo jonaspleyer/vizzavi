@@ -1,4 +1,26 @@
 //! > vizz a vi
+//!
+//!
+//! # Red Circle
+//! ```
+//! use vizzavi::*;
+//!
+//! let mut figure = Figure::new();
+//! figure.set_xlim([0., 400.]);
+//! figure.set_ylim([0., 300.]);
+//!
+//! let circle = Circle {
+//!     middle: [150., 200.].into(),
+//!     radius: 30.,
+//!     color: [200, 0, 0],
+//! };
+//! figure.add_element(circle);
+//!
+//! figure.save_image([400, 300], "figures/red-circle.png")?;
+//! # Ok::<(), ErrorTypes>(())
+//! ```
+//!
+//! <img src="https://github.com/jonaspleyer/vizzavi/tree/main/figures/red-circle.png">
 
 // #![warn(missing_docs)]
 
