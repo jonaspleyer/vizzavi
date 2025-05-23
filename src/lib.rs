@@ -16,16 +16,23 @@ pub enum ErrorTypes {
 
 pub type Result<T> = core::result::Result<T, ErrorTypes>;
 
-#[derive(Clone)]
 pub struct Rectangle<T> {
-    pub color: nalgebra::Vector3<u8>,
     pub min: nalgebra::Vector2<T>,
     pub max: nalgebra::Vector2<T>,
+    pub color: Color,
 }
 
-#[derive(Clone)]
+pub type Color = [u8; 3];
+
+pub struct Circle<T> {
+    pub middle: nalgebra::Vector2<T>,
+    pub radius: T,
+    pub color: Color,
+}
+
 pub struct Triangle<T> {
     pub points: nalgebra::Matrix3x2<T>,
+    pub color: Color,
 }
 
 pub trait ColorMap<T>
@@ -56,6 +63,7 @@ where
 pub enum Element<T> {
     Rectangle(Rectangle<T>),
     Triangle(Triangle<T>),
+    Circle(Circle<T>),
     FuncEval(
         Box<dyn Fn(nalgebra::Vector2<T>) -> Option<T>>,
         Box<dyn ColorMap<T>>,
@@ -72,9 +80,11 @@ impl<T> Element<T> {
         let size_pixels = nalgebra::Vector2::from([size_pixels.0, size_pixels.1]);
 
         match self {
-            Element::Triangle(Triangle { points }) => todo!(),
+            Element::Triangle(Triangle { points, color }) => {
+                todo!()
+            }
             Element::Rectangle(Rectangle { color, min, max }) => {
-                let color = ndarray::Array1::from_iter(<[u8; 3]>::from(*color));
+                let color = ndarray::Array1::from_iter(*color);
                 let pix_min = axis.coordinate_to_pixel(min, size_pixels);
                 let pix_max = axis.coordinate_to_pixel(max, size_pixels);
                 canvas
@@ -84,6 +94,33 @@ impl<T> Element<T> {
                         ..
                     ])
                     .assign(&color);
+            }
+            Element::Circle(Circle {
+                middle,
+                radius,
+                color,
+            }) => {
+                let color = ndarray::Array1::from_iter(*color);
+                let min = middle.add_scalar(-*radius);
+                let max = middle.add_scalar(*radius);
+                let pix_min = axis.coordinate_to_pixel(&min, size_pixels);
+                let pix_max = axis.coordinate_to_pixel(&max, size_pixels);
+
+                let two = T::one() + T::one();
+                let pix_middle: nalgebra::Vector2<T> =
+                    (pix_max + pix_min).map(|x| x.to_superset() / two);
+                for m in pix_min[0]..pix_max[0] {
+                    let t: T = (m.to_superset() - pix_middle[0]).abs()
+                        / (pix_max[0].to_superset() - pix_middle[0]);
+                    let s = (T::one() - t.powf(two)).sqrt();
+                    let q = s * (pix_max[1] - pix_min[1]).to_superset() / two;
+
+                    let pix_low = (pix_middle[1] - q).as_();
+                    let pix_high = (pix_middle[1] + q).as_();
+                    canvas
+                        .slice_mut(ndarray::s![m, pix_low..pix_high, ..])
+                        .assign(&color);
+                }
             }
             Element::FuncEval(func, cmap) => {
                 let shape = canvas.dim();
@@ -114,6 +151,12 @@ impl<T> From<Triangle<T>> for Element<T> {
 impl<T> From<Rectangle<T>> for Element<T> {
     fn from(value: Rectangle<T>) -> Self {
         Self::Rectangle(value)
+    }
+}
+
+impl<T> From<Circle<T>> for Element<T> {
+    fn from(value: Circle<T>) -> Self {
+        Self::Circle(value)
     }
 }
 
@@ -182,7 +225,6 @@ where
         func: impl 'static + Fn(nalgebra::Vector2<T>) -> Option<T>,
         cmap: impl 'static + ColorMap<T>,
     ) {
-        println!("called");
         self.add_element(Element::FuncEval(Box::new(func), Box::new(cmap)));
     }
 
@@ -210,8 +252,8 @@ where
         let img = image::RgbImage::from_fn(size_pixels[0] as u32, size_pixels[1] as u32, |i, j| {
             image::Rgb([
                 canvas[(i as usize, j as usize, 0)],
-                canvas[(i as usize, j as usize, 0)],
-                canvas[(i as usize, j as usize, 0)],
+                canvas[(i as usize, j as usize, 1)],
+                canvas[(i as usize, j as usize, 2)],
             ])
         });
 
