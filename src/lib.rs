@@ -20,7 +20,7 @@
 //! # Ok::<(), ErrorTypes>(())
 //! ```
 //!
-//! <img src="https://github.com/jonaspleyer/vizzavi/tree/main/figures/red-circle.png">
+//! <img src="https://raw.githubusercontent.com/jonaspleyer/vizz/refs/heads/main/figures/red-circle.png">
 
 // #![warn(missing_docs)]
 
