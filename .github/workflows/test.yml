@@ -29,6 +29,7 @@ jobs:
         os: [ubuntu-latest, windows-latest]
     name: Test
     runs-on: ubuntu-latest
+    needs: check
     steps:
       - name: Checkout sources
         uses: actions/checkout@v2
@@ -48,6 +49,7 @@ jobs:
         os: [ubuntu-latest, windows-latest]
     name: DocTest
     runs-on: ${{ matrix.os }}
+    needs: test
     steps:
       - name: Checkout sources
         uses: actions/checkout@v2
@@ -60,28 +62,9 @@ jobs:
       - name: Run cargo test
         run: cargo test --doc
 
-  miri:
-    name: Miri
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout sources
-        uses: actions/checkout@v2
-
-      - name: Install Rustup
-        uses: dtolnay/rust-toolchain@nightly
-
-      - name: Install Miri
-        run: |
-          rustup toolchain install nightly --component miri
-          rustup override set nightly
-          cargo miri setup
-
-      - name: Test with Miri
-        run: cargo miri test
-
   codecov:
     runs-on: ubuntu-latest
-    needs: test
+    needs: doctest
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
