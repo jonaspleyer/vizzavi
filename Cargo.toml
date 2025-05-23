@@ -2,6 +2,10 @@
 name = "vizzavi"
 version = "0.1.0"
 edition = "2021"
+description = "Eperimental Visualization Library"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/jonaspleyer/vizzavi"
+
 
 [dependencies]
 image = "0.25.6"
