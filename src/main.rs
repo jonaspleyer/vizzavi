@@ -1,4 +1,4 @@
-use vizzavi::*;
+use vizzavi::backend::bitmap::*;
 
 fn main() -> Result<()> {
     let mut figure: Figure<f32> = Figure::new();
