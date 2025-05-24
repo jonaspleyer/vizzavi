@@ -1,3 +1,4 @@
+#[derive(Clone, Debug)]
 pub struct Rectangle<T> {
     pub min: nalgebra::Vector2<T>,
     pub max: nalgebra::Vector2<T>,
@@ -6,12 +7,14 @@ pub struct Rectangle<T> {
 
 pub type Color = [u8; 3];
 
+#[derive(Clone, Debug)]
 pub struct Circle<T> {
     pub middle: nalgebra::Vector2<T>,
     pub radius: T,
     pub color: Color,
 }
 
+#[derive(Clone, Debug)]
 pub struct Triangle<T> {
     pub points: nalgebra::Matrix3x2<T>,
     pub color: Color,
@@ -27,6 +30,7 @@ where
     }
 }
 
+#[derive(Clone, Debug)]
 pub struct CmapGreys;
 
 impl<T> ColorMap<T> for CmapGreys
